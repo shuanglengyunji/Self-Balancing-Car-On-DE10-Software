@@ -244,6 +244,38 @@ void Get_Angle(void)
 }
 
 /**************************************************************************
+Function     : LQR control of the system
+parameter    : The Angle value、The angular speed value、 The encoder values of the wheel
+return value : LQR output Control PWM
+**************************************************************************/
+
+float LQR(float Angle,float Gyro)
+{
+	static float Phi=0;
+	float Phi_Dot; //record encoder data
+	float Theta;
+	float Theta_Dot;
+	float out;
+
+	// Phi_Dot
+	Phi_Dot = (pcar->Speed_right - pcar->Speed_left) - 0;		// 计算速度之和（因为两个码盘是相对着装的，所以车轮同向运动时速度反馈是相反的数值）
+	//printf("encoder least = %f\n", Encoder_Least);
+
+	// Phi
+	Phi += Phi_Dot;
+	if(Phi>8000)  	Phi=8000;
+	if(Phi<-8000)	Phi=-8000;
+
+	// Theta
+	Theta = Angle;
+	Theta_Dot = Gyro;
+
+	out = (Phi * -1 + Theta * -57 + Phi_Dot * 0.13 + Theta_Dot * -7.75);
+	return out;
+}
+
+
+/**************************************************************************
 Function     : Upright Closed-loop Control (PD)
 parameter    : The Angle value、The angular speed value
 return value : Upright Closed-loop Control PWM
@@ -252,14 +284,14 @@ float balance(float Angle,float Gyro)
 {
 	 float Bias,kp=11.0,kd=0.020;
 	 float balance;
-	 Bias=Angle-1;
+	 Bias=Angle-1;				// 偏差
 	 balance=kp*Bias+Gyro*kd;
 	 return balance;
 }
 
 /**************************************************************************
 Function     : Speed Closed-loop Control (PI)
-parameter    : The encoder values of the wheelthe
+parameter    : The encoder values of the wheel
 return value : Speed Closed-loop Control PWM
 **************************************************************************/
 float speed(void)
@@ -274,17 +306,14 @@ float speed(void)
 	{
 
 		if(distance >= 15)
-			Movement = -10;
+			Movement = -15;
 		else
 			Movement = 0;
-		/*
-		Movement = -10;
-		*/
 
 	}
 	else if(pcar->driver_direction&CAR_DIRECTION_BACKWARD)
 	{
-		Movement = 13;
+		Movement = 20;
 	}
 	else
 	{
@@ -359,22 +388,22 @@ int turn(float Gyro)
 		}
 		else if (Position >= 3){
 			Bias += (Position * 16);
-			flag_over_three = 40;
+			flag_over_three = 50;
 		}
 		else if (Position <= -3){
 			Bias += (Position * 16);
-			flag_over_three = -40;
+			flag_over_three = -50;
 		}
 		else{
 			if (flag_over_three > 0)
 			{
 				flag_over_three = flag_over_three - 1;
-				Bias -= 18;
+				Bias -= 25;
 			}
 			else if (flag_over_three < 0)
 			{
 				flag_over_three = flag_over_three + 1;
-				Bias += 18;
+				Bias += 25;
 			}
 			else
 			{
@@ -602,6 +631,7 @@ void alarm_handle(int sig)
 	static int irq_count=0, NG_count=0;
 	int cnt=0;
 	const int nAdjust=15;
+	float LQR_out;
 	
 	global_counter++;
 
@@ -666,6 +696,7 @@ void alarm_handle(int sig)
 	}
 	
 	// 计算PID
+	LQR_out = LQR(Angle_Balance,Gyro_Balance);
 	balance_pwm = balance(Angle_Balance,Gyro_Balance);
 	velocity_pwm = speed();
 	turn_pwm = turn(Gyro_Turn);
@@ -675,6 +706,8 @@ void alarm_handle(int sig)
 		//printf("balance = %f\nvelocity = %f\nturn = %f\n", balance_pwm,velocity_pwm,turn_pwm);
 		pcar->Motor_Set_Speed(-balance_pwm-velocity_pwm+turn_pwm,
 							  -balance_pwm-velocity_pwm-turn_pwm);
+//		pcar->Motor_Set_Speed(-balance_pwm-velocity_pwm+turn_pwm+LQR_out,
+//							  -balance_pwm-velocity_pwm-turn_pwm+LQR_out);
 	}
 }
 
