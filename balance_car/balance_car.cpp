@@ -360,30 +360,55 @@ int turn(float Gyro)
 {
 	float Bias,kp,kd;
 	float turn_pwm;
-	static float position_last = 0;
-
-	kp = 0.3;
-	kd = 0.015;
+	static float Position_last = 0;
+	float Position_derivative;
+	static int delay = 0;
 
 	Bias = pcar->Speed_left+pcar->Speed_right;
 
-	/*
-	if(pcar->turn_direction&CAR_TURN_LEFT){
-	 Bias+=110;
-	}else if(pcar->turn_direction&CAR_TURN_RIGHT){
-	 Bias-=110;
-	}
-	*/
+	Position_derivative = Position - Position_last;
+	Position_last = Position;
 
-	// add this to improve balance status
-	//if((led3==0)&&(Angle_Balance<10&&Angle_Balance>-10))
-	//turn_pwm=0;
-	//else
-
-	static int flag_over_three = 0;
 	if(pcar->driver_direction&CAR_DIRECTION_FORWARD)
 	{
-		if (Position <= 0.5 && Position > -0.5){
+
+		if (Position >= 3){				// +3 端
+			Bias += (Position * 20);
+		}
+		else if (Position <= -3){		// -3 端
+			Bias += (Position * 20);
+		}
+		else if (Position_derivative < 0){	// 向 -3 移动
+			delay = 30;
+			Bias -= 25;
+		}
+		else if (delay > 0){
+			delay = delay - 1;
+			Bias -= 25;
+		}
+		else if (Position_derivative > 0){	// 向 +3 移动
+			delay = -30;
+			Bias += 25;
+		}
+		else if (delay < 0){
+			delay = delay + 1;
+			Bias += 25;
+		}
+		else
+		{
+
+		}
+	}
+	else
+	{
+
+	}
+
+
+
+/*
+		if (Position <= 0.5 && Position > -0.5)
+		{
 			Bias += 0;
 		}
 		else if (Position >= 3){
@@ -413,18 +438,19 @@ int turn(float Gyro)
 	}
 	else if (pcar->driver_direction&CAR_DIRECTION_BACKWARD)
 	{
-		if (Position <= 0.5 && Position > -1)
-			Bias -= 0;
-		else
-			Bias -= (Position * 12 - 2 * (Position - position_last));
+		Bias -= 0;
 	}
 	else
 	{
 
 	}
 	position_last = Position;
+*/
 
-	turn_pwm=kp*Bias-kd*Gyro;
+
+	kp = 0.3;
+	kd = 0.015;
+	turn_pwm = kp*Bias - kd*Gyro;
 
 	return turn_pwm;
 }

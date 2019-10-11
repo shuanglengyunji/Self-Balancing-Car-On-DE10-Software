@@ -2,13 +2,15 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="Turn" key="selection"/>
+		<item value="Gyro_Turn" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="true" key="wholeword"/>
 		<list key="findhistory">
+			<item value="Gyro_Turn"/>
 			<item value="turn"/>
+			<item value="LQR"/>
 			<item value="red"/>
 			<item value="MPU6500"/>
 		</list>
