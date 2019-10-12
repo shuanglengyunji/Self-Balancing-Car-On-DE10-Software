@@ -13625,12 +13625,17 @@
 <includePath path="C:/intelFPGA_lite/18.0/embedded/ip/altera/hps/altera_hps/hwlib/include/soc_cv_av"/>
 <includePath path="C:/intelFPGA_lite/18.0/embedded/ip/altera/hps/altera_hps/hwlib/include/"/>
 <includePath path="C:/Users/Han/Desktop/Self-Balancing-Car-On-DE10-Software/balance_car/lib/"/>
+<includePath path="#undef __ARM_FEATURE_FMA" removed="true"/>
+<includePath path="#undef __ARM_NEON__" removed="true"/>
 <includePath path="c:\intelfpga_lite\18.0\embedded\host_tools\mentor\gnu\arm\baremetal\bin\../lib/gcc/arm-altera-eabi/6.2.0/../../../../arm-altera-eabi/include/c++/6.2.0"/>
+<includePath path="#undef __ARM_NEON" removed="true"/>
 <includePath path="c:\intelfpga_lite\18.0\embedded\host_tools\mentor\gnu\arm\baremetal\bin\../lib/gcc/arm-altera-eabi/6.2.0/../../../../arm-altera-eabi/include/c++/6.2.0/arm-altera-eabi"/>
+<includePath path="#undef __ARM_NEON_FP" removed="true"/>
 <includePath path="c:\intelfpga_lite\18.0\embedded\host_tools\mentor\gnu\arm\baremetal\bin\../lib/gcc/arm-altera-eabi/6.2.0/../../../../arm-altera-eabi/include/c++/6.2.0/backward"/>
 <includePath path="c:\intelfpga_lite\18.0\embedded\host_tools\mentor\gnu\arm\baremetal\bin\../lib/gcc/arm-altera-eabi/6.2.0/include"/>
 <includePath path="c:\intelfpga_lite\18.0\embedded\host_tools\mentor\gnu\arm\baremetal\bin\../lib/gcc/arm-altera-eabi/6.2.0/include-fixed"/>
 <includePath path="c:\intelfpga_lite\18.0\embedded\host_tools\mentor\gnu\arm\baremetal\bin\../lib/gcc/arm-altera-eabi/6.2.0/../../../../arm-altera-eabi/include"/>
+<includePath path="#undef __ARM_ARCH_EXT_IDIV__" removed="true"/>
 <definedSymbol symbol="__STDC__=1"/>
 <definedSymbol symbol="__cplusplus=201402L"/>
 <definedSymbol symbol="__STDC_UTF_16__=1"/>

@@ -365,8 +365,6 @@ int turn(float Gyro)
 	static float Position_derivative_out;
 	static float Position_derivative_last;
 
-	float kp_position,kd_position;
-
 	// 更新 Position_derivative
 	Position_derivative_tmp = Position - Position_last;		// 微分
 	Position_last = Position;
@@ -380,7 +378,12 @@ int turn(float Gyro)
 	// 过低通滤波器
 	Position_derivative_out = 0.95 * Position_derivative_last + 0.05 * Position_derivative;
 
+	float kp_position,kd_position,ki_position;
 	float out;
+	static float Position_integration = 0;
+
+
+
 	if(pcar->driver_direction&CAR_DIRECTION_FORWARD)
 	{
 		// kp
@@ -397,12 +400,24 @@ int turn(float Gyro)
 		// kd
 		kd_position = 40;
 
+		// ki
+		ki_position = 20;
+
 		// PID control
-		out = kp_position * Position + kd_position * Position_derivative;
+		Position_integration += Position * 0.0001;
+		if (Position_integration >= 4)
+			Position_integration = 4;
+		if (Position_integration <= -4)
+			Position_integration = -4;
+
+		out = kp_position * Position + \
+				ki_position * Position_integration + \
+				kd_position * Position_derivative;
 
 	}
 	else
 	{
+		Position_integration = 0;
 		out = 0;
 	}
 

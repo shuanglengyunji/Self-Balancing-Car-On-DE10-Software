@@ -1,4 +1,4 @@
-15:06:58 **** Incremental Build of configuration Default for project balance_car ****
+15:13:41 **** Incremental Build of configuration Default for project balance_car ****
 make all 
 arm-linux-gnueabihf-g++ -g -Wall -std=c++11  -Dsoc_cv_av -IC:/intelFPGA_lite/18.0/embedded/ip/altera/hps/altera_hps/hwlib/include/soc_cv_av -IC:/intelFPGA_lite/18.0/embedded/ip/altera/hps/altera_hps/hwlib/include/ -I./lib/ -g -Wall -lpthread ./lib/MPU.cpp ./lib/IrRx.cpp ./lib/hps.cpp ./lib/Queue.cpp ./lib/kalman.cpp ./lib/fpga.cpp ./lib/i2c_opencores.cpp ./lib/car.cpp balance_car.cpp -o balance_car
 ./lib/MPU.cpp: In member function 'bool MPU::WriteReg(uint32_t, uint8_t, uint8_t)':
@@ -22,10 +22,10 @@ balance_car.cpp:365:15: warning: variable 'Position_derivative_out' set but not 
   static float Position_derivative_out;
                ^
 balance_car.cpp: In function 'void* IrRx_thread(void*)':
-balance_car.cpp:462:1: warning: no return statement in function returning non-void [-Wreturn-type]
+balance_car.cpp:477:1: warning: no return statement in function returning non-void [-Wreturn-type]
  }
  ^
 balance_car.cpp: In function 'void alarm_handle(int)':
-balance_car.cpp:625:8: warning: variable 'LQR_out' set but not used [-Wunused-but-set-variable]
+balance_car.cpp:640:8: warning: variable 'LQR_out' set but not used [-Wunused-but-set-variable]
   float LQR_out;
         ^
