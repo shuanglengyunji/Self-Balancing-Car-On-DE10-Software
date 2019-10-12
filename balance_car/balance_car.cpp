@@ -358,95 +358,60 @@ return value : Turn Closed-loop Control PWM
 **************************************************************************/
 int turn(float Gyro)
 {
-	float Bias,kp,kd;
-	float turn_pwm;
 	static float Position_last = 0;
-	float Position_derivative;
-	static int delay = 0;
 
-	Bias = pcar->Speed_left+pcar->Speed_right;
+	float Position_derivative_tmp;
+	static float Position_derivative;
+	static float Position_derivative_out;
+	static float Position_derivative_last;
 
-	Position_derivative = Position - Position_last;
+	float kp_position,kd_position;
+
+	// 更新 Position_derivative
+	Position_derivative_tmp = Position - Position_last;		// 微分
 	Position_last = Position;
+	if (Position_derivative_tmp != 0)
+	{
+		Position_derivative_last = Position_derivative;	// 更新 Position_derivative_last
+		Position_derivative = Position_derivative_tmp;	// 更新 Position_derivative
 
+	}
+
+	// 过低通滤波器
+	Position_derivative_out = 0.95 * Position_derivative_last + 0.05 * Position_derivative;
+
+	float out;
 	if(pcar->driver_direction&CAR_DIRECTION_FORWARD)
 	{
-
-		if (Position >= 3){				// +3 端
-			Bias += (Position * 20);
-		}
-		else if (Position <= -3){		// -3 端
-			Bias += (Position * 20);
-		}
-		else if (Position_derivative < 0){	// 向 -3 移动
-			delay = 30;
-			Bias -= 25;
-		}
-		else if (delay > 0){
-			delay = delay - 1;
-			Bias -= 25;
-		}
-		else if (Position_derivative > 0){	// 向 +3 移动
-			delay = -30;
-			Bias += 25;
-		}
-		else if (delay < 0){
-			delay = delay + 1;
-			Bias += 25;
+		// kp
+		if (Position >= 3 || Position <= -3)
+		{
+			kp_position = 20;
 		}
 		else
 		{
-
+			// kp_position = 12;
+			kp_position = 20;
 		}
+
+		// kd
+		kd_position = 40;
+
+		// PID control
+		out = kp_position * Position + kd_position * Position_derivative;
+
 	}
 	else
 	{
-
+		out = 0;
 	}
 
+	float Bias;
+	Bias = pcar->Speed_left+pcar->Speed_right;
+	Bias += out;
 
-
-/*
-		if (Position <= 0.5 && Position > -0.5)
-		{
-			Bias += 0;
-		}
-		else if (Position >= 3){
-			Bias += (Position * 16);
-			flag_over_three = 50;
-		}
-		else if (Position <= -3){
-			Bias += (Position * 16);
-			flag_over_three = -50;
-		}
-		else{
-			if (flag_over_three > 0)
-			{
-				flag_over_three = flag_over_three - 1;
-				Bias -= 25;
-			}
-			else if (flag_over_three < 0)
-			{
-				flag_over_three = flag_over_three + 1;
-				Bias += 25;
-			}
-			else
-			{
-				Bias += (Position * 12 - 2 * (Position - position_last));
-			}
-		}
-	}
-	else if (pcar->driver_direction&CAR_DIRECTION_BACKWARD)
-	{
-		Bias -= 0;
-	}
-	else
-	{
-
-	}
-	position_last = Position;
-*/
-
+	float turn_pwm;
+	float kp,kd;
 
 	kp = 0.3;
 	kd = 0.015;
@@ -814,7 +779,7 @@ int main(int argc, char **argv)
 
 			// Display Binary
 			Print_Infra_Red(pcar->infra_red);
-
+			//printf("%f\n",out);
 		}
 
 		//pcar->get_key(&demo, &env);
