@@ -306,7 +306,7 @@ float speed(void)
 	{
 
 		if(distance >= 15)
-			Movement = -15;
+			Movement = -20;
 		else
 			Movement = 0;
 
@@ -382,12 +382,10 @@ int turn(float Gyro)
 	float out;
 	static float Position_integration = 0;
 
-
-
 	if(pcar->driver_direction&CAR_DIRECTION_FORWARD)
 	{
 		// kp
-		if (Position >= 3 || Position <= -3)
+		if (Position >= 2 || Position <= -2)
 		{
 			kp_position = 20;
 		}
@@ -401,14 +399,14 @@ int turn(float Gyro)
 		kd_position = 40;
 
 		// ki
-		ki_position = 20;
+		ki_position = 10;
 
 		// PID control
-		Position_integration += Position * 0.0001;
-		if (Position_integration >= 4)
-			Position_integration = 4;
-		if (Position_integration <= -4)
-			Position_integration = -4;
+		Position_integration += Position * 0.001;
+		if (Position_integration >= 8)
+			Position_integration = 8;
+		if (Position_integration <= -8)
+			Position_integration = -8;
 
 		out = kp_position * Position + \
 				ki_position * Position_integration + \
