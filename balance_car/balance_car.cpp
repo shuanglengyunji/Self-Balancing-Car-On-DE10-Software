@@ -302,14 +302,9 @@ float speed(void)
 	float kp=2.2,ki=0.05;
 
 	// 判断期望速度数值
-	if(pcar->driver_direction&CAR_DIRECTION_FORWARD)
+	if( (pcar->driver_direction&CAR_DIRECTION_FORWARD) && distance >= 15)
 	{
-
-		if(distance >= 15)
-			Movement = -20;
-		else
-			Movement = 0;
-
+		Movement = -20;
 	}
 	else if(pcar->driver_direction&CAR_DIRECTION_BACKWARD)
 	{
@@ -382,7 +377,7 @@ int turn(float Gyro)
 	float out;
 	static float Position_integration = 0;
 
-	if(pcar->driver_direction&CAR_DIRECTION_FORWARD)
+	if( (pcar->driver_direction&CAR_DIRECTION_FORWARD) && distance >= 15)
 	{
 		// kp
 		if (Position >= 2 || Position <= -2)
