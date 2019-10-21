@@ -413,6 +413,36 @@ int turn(float Gyro)
 				kd_position * Position_derivative;
 
 	}
+	else if (pcar->driver_direction&CAR_DIRECTION_BACKWARD)
+	{
+		// kp
+		if (Position >= 2 || Position <= -2)
+		{
+			kp_position = 20;
+		}
+		else
+		{
+			// kp_position = 12;
+			kp_position = 20;
+		}
+
+		// kd
+		kd_position = 40;
+
+		// ki
+		ki_position = 10;
+
+		// PID control
+		Position_integration += Position * 0.001;
+		if (Position_integration >= 8)
+			Position_integration = 8;
+		if (Position_integration <= -8)
+			Position_integration = -8;
+
+		out = - kp_position * Position - \
+				ki_position * Position_integration - \
+				kd_position * Position_derivative;
+	}
 	else
 	{
 		Position_integration = 0;
